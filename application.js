@@ -17,6 +17,7 @@ function checkPromptStr(str) {
 const numberOfFilms = promptNumb("Сколько фильмов вы уже посмотрели?");
 
 
+
 const personalMovieDB = {
     count: numberOfFilms,
     movies: {},
@@ -34,6 +35,20 @@ for (let i = 0; i < 2; i++ ) {
     personalMovieDB.movies[lastFilm] = rating;
 };
 
+
+
 if (personalMovieDB.count < 10) {alert("Просмотрено довольно мало фильмов")}
 else if (personalMovieDB.count < 30 && personalMovieDB.count >= 10) {alert("Вы классический зритель")}
 else if (personalMovieDB.count >= 30) {alert("Вы киноман")};
+
+function showMyDB() {
+    if (!personalMovieDB.privat) {console.log(personalMovieDB)}
+}
+
+function writeYourGenres() {
+    for (let i = 1; i < 4; i++) {
+        personalMovieDB.genres.push(prompt(`Ваш любимый жанр под номером ${i}`));
+    };
+};
+
+writeYourGenres();
