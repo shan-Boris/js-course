@@ -7,13 +7,13 @@ window.addEventListener('DOMContentLoaded', () => {
         tabparent = document.querySelector('.tabheader__items');
 
     function hideTabsContent() {
-        tabcontent.forEach((item, i)=> {
+        tabcontent.forEach((item, i) => {
             item.classList.remove('show');
             item.classList.add('hide');
             tab[i].classList.remove('tabheader__item_active');
 
         });
-        
+
     }
 
     function showTabContent(i = 0) {
@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     tabparent.addEventListener('click', (e => {
-        if (e?.target.classList.contains('tabheader__item')){
+        if (e?.target.classList.contains('tabheader__item')) {
             tab.forEach((item, i) => {
                 if (item == e.target) {
                     hideTabsContent();
@@ -37,14 +37,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // timer
 
-    const deadline = 'February 25, 2022';
+    const deadline = 'February 27, 2022';
 
     function getTimeOff(endtime) {
         const delta = Date.parse(endtime) - Date.parse(new Date()),
             days = Math.floor(delta / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((delta / (1000 * 60 * 60) % 24) ),
+            hours = Math.floor((delta / (1000 * 60 * 60) % 24)),
             min = Math.floor((delta / (1000 * 60)) % 60),
-            sec = Math.floor((delta / 1000 % 60) );
+            sec = Math.floor((delta / 1000 % 60));
 
         return {
             'total': delta,
@@ -65,14 +65,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
         updateClock();
 
-        function updateClock(){
-        const t = getTimeOff(endtime);
-        days.innerHTML = getZero(t.days);
-        hours.innerHTML = getZero(t.hours);
-        minutes.innerHTML = getZero(t.minutes);
-        seconds.innerHTML = getZero(t.seconds);
-        
-        if(t.total <= 0) clearInterval(clockId);
+        function updateClock() {
+            const t = getTimeOff(endtime);
+            days.innerHTML = getZero(t.days);
+            hours.innerHTML = getZero(t.hours);
+            minutes.innerHTML = getZero(t.minutes);
+            seconds.innerHTML = getZero(t.seconds);
+
+            if (t.total <= 0) clearInterval(clockId);
 
         }
 
@@ -82,4 +82,19 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     setClock('.timer', deadline);
+
+
+    // modal
+
+    const btnModalOpen = document.querySelectorAll('[data-open]'),
+        btnModalClose = document.querySelector('.modal__close'),
+        modalWindow = document.querySelector('.modal');
+
+    btnModalOpen.forEach(i => {
+        i.addEventListener('click', e => modalWindow.style.display = 'block')});
+    btnModalClose.addEventListener('click', e => modalWindow.style.display = 'none');
+    
+
 });
+
+
