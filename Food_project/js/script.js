@@ -90,11 +90,42 @@ window.addEventListener('DOMContentLoaded', () => {
         btnModalClose = document.querySelector('.modal__close'),
         modalWindow = document.querySelector('.modal');
 
-    btnModalOpen.forEach(i => {
-        i.addEventListener('click', e => modalWindow.style.display = 'block')});
-    btnModalClose.addEventListener('click', e => modalWindow.style.display = 'none');
+        function showModal(window) {
+            window.classList.add('show');
+            window.classList.remove('hide');
+            document.querySelector('body').style.overflow = 'hidden';
+            clearTimeout(modalTimerId);
+        };
+        function hideModal(window) {
+            window.classList.add('hide');
+            window.classList.remove('show');
+            document.querySelector('body').style.overflow = '';
+        };
     
+    btnModalOpen.forEach(i => {
+        i.addEventListener('click', () => showModal(modalWindow))}); 
 
+    btnModalClose.addEventListener('click', () => hideModal(modalWindow) );
+
+    modalWindow.addEventListener('click', (e) => {
+        if (e?.target.className == 'modal show') hideModal(modalWindow);
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.code == "Escape" && modalWindow.classList.contains('show')){
+            hideModal(modalWindow);
+        }});
+    
+    const modalTimerId = setTimeout(() => showModal(modalWindow), 8000);
+
+    function showModalInScrollEnd() {
+        if(window.scrollY + document.documentElement.clientHeight >= 
+            document.documentElement.scrollHeight - 1) {
+                showModal(modalWindow);
+                document.removeEventListener('scroll', showModalInScrollEnd);
+    }};
+
+    document.addEventListener('scroll', showModalInScrollEnd);
 });
 
 
