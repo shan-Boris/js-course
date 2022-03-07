@@ -198,6 +198,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
     forms.forEach(item => postFromForm(item));
 
+    const postData = async (url, obj) => {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-type':'application/json'
+            },
+            body: obj                
+        });
+
+        return await res.json();
+    };
+
     function postFromForm(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -208,31 +219,16 @@ window.addEventListener('DOMContentLoaded', () => {
             display: block;
             margin: 0 auto;`;
             form.insertAdjacentElement('afterend', statusMessage);
-            const name = form.querySelector('input[name="name"]').value,
-                phone = form.querySelector('input[name="phone"]').value,
-                request = new XMLHttpRequest();
-            request.open('POST', 'js/server.php');
-            request.setRequestHeader('Content-type', 'application/json; charset =utf-8');
-
-            request.send(JSON.stringify({
-                'имя': name,
-                'тел': phone
-
-            }));
-
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    form.reset();
-                    showThanksModal(message.success);
-                    statusMessage.remove();
-                } else {
-                    showThanksModal(message.failure);
-                }
-
-            })
-
             
+            const formData = new FormData(form),
+                formJson = JSON.stringify(Object.fromEntries(formData.entries()));
+            postData('http://localhost:3000/requests', formJson)
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                statusMessage.remove();
+            }). catch(() => showThanksModal(message.failure))
+            .finally(() => form.reset());            
         })
     }
 
@@ -258,6 +254,8 @@ window.addEventListener('DOMContentLoaded', () => {
             hideModal(modalWindow);
         }, 4000)
     }
+
+    fetch('http://localhost:3000/menu').then(data => data.json()).then(res => console.log(res));
 
 });
 
