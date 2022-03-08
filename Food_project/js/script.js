@@ -162,29 +162,22 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     document.querySelector('.menu__field > .container').innerHTML = '';
-    new MenuCard(
-        'img/tabs/vegy.jpg', 
-        'vegy', 
-        'Меню "Фитнес"', 
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 
-        9)
-    .render();
 
-    new MenuCard(
-        'img/tabs/post.jpg', 
-        'post', 
-        'Меню "Постное"', 
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ', 
-        15)
-    .render();
+    const getDataCards = async (u)=> {
+        const res = await fetch(u);
+            if(!res.ok) {
+                throw new Error(`status ${res.status}`);
+            };
+             return await res.json();                  
+    };
+   
 
-    new MenuCard(
-        'img/tabs/elite.jpg', 
-        'elite', 
-        'Меню “Премиум”', 
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 
-        20)
-    .render();
+    getDataCards('http://localhost:3000/menu').then(cards => {
+        cards.forEach(({img, altimg, title, descr, price}) => {
+            new MenuCard(img, altimg, title, descr, price).render();
+        })
+    });
+    
 
     // POST
 
@@ -219,7 +212,7 @@ window.addEventListener('DOMContentLoaded', () => {
             display: block;
             margin: 0 auto;`;
             form.insertAdjacentElement('afterend', statusMessage);
-            
+
             const formData = new FormData(form),
                 formJson = JSON.stringify(Object.fromEntries(formData.entries()));
             postData('http://localhost:3000/requests', formJson)
@@ -254,8 +247,6 @@ window.addEventListener('DOMContentLoaded', () => {
             hideModal(modalWindow);
         }, 4000)
     }
-
-    fetch('http://localhost:3000/menu').then(data => data.json()).then(res => console.log(res));
 
 });
 
