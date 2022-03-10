@@ -37,7 +37,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // timer
 
-    const deadline = 'February 27, 2022';
+    const deadline = 'March 27, 2022';
 
     function getTimeOff(endtime) {
         const delta = Date.parse(endtime) - Date.parse(new Date()),
@@ -67,19 +67,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
         function updateClock() {
             const t = getTimeOff(endtime);
-            days.innerHTML = getZero(t.days);
-            hours.innerHTML = getZero(t.hours);
-            minutes.innerHTML = getZero(t.minutes);
-            seconds.innerHTML = getZero(t.seconds);
+            days.innerHTML = addZero(t.days);
+            hours.innerHTML = addZero(t.hours);
+            minutes.innerHTML = addZero(t.minutes);
+            seconds.innerHTML = addZero(t.seconds);
 
             if (t.total <= 0) clearInterval(clockId);
 
         }
 
-        function getZero(number) {
-            return number < 10 ? `0${number}` : number
-        }
-    }
+
+    };
+    function addZero(number) {
+        return number < 10 ? `0${number}` : number
+    };
 
     setClock('.timer', deadline);
 
@@ -163,7 +164,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('.menu__field > .container').innerHTML = '';
 
-    const getDataCards = async (u)=> {
+    const getData = async (u)=> {
         const res = await fetch(u);
             if(!res.ok) {
                 throw new Error(`status ${res.status}`);
@@ -172,7 +173,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
    
 
-    getDataCards('http://localhost:3000/menu').then(cards => {
+    getData('http://localhost:3000/menu').then(cards => {
         cards.forEach(({img, altimg, title, descr, price}) => {
             new MenuCard(img, altimg, title, descr, price).render();
         })
@@ -247,6 +248,53 @@ window.addEventListener('DOMContentLoaded', () => {
             hideModal(modalWindow);
         }, 4000)
     }
+
+    // slider
+    function addSlideInHTML(slideData, i) {
+        const slide = document.createElement('div');
+        slide.classList.add('offer__slide');
+        slide.classList.add(`slide${i + 1}`);
+        if (i !== 0) slide.classList.add('hide');
+        slide.innerHTML = `<img src=${slideData.img} alt=${slideData.altimg}>`;
+        document.querySelector('.offer__slider').append(slide);
+    }
+    getData('http://localhost:3000/slider').then(slide => {
+        slide.forEach((slide, i) => {
+           addSlideInHTML(slide, i);     
+        });
+        document.querySelector('#current').textContent = '01';
+        const totalSlide = document.querySelector('#total');
+        totalSlide.textContent = addZero(slide.length);
+    });
+
+    const prevSlide = document.querySelector('.offer__slider-prev'),
+          nextSlide = document.querySelector('.offer__slider-next'),
+          currentSlide = document.querySelector('#current'),
+          totalSlides = document.querySelector('#total');
+
+    function showNextSlide(slide) {
+        document.querySelector(`.slide${+currentSlide.textContent}`).classList.remove('show');
+        document.querySelector(`.slide${+currentSlide.textContent}`).classList.add('hide');
+        currentSlide.textContent = `${addZero(slide)}`;
+        document.querySelector(`.slide${+currentSlide.textContent}`).classList.remove('hide');
+        document.querySelector(`.slide${+currentSlide.textContent}`).classList.add('show');
+    };
+
+    nextSlide.addEventListener('click', (e) => {
+        if (currentSlide.textContent !== totalSlides.textContent) {
+            showNextSlide(+currentSlide.textContent + 1);
+        } else {
+            showNextSlide(1);
+        }    
+    })
+
+    prevSlide.addEventListener('click', (e) => {
+        if (currentSlide.textContent != 1) {
+            showNextSlide(+currentSlide.textContent - 1);
+        } else {
+            showNextSlide(+totalSlides.textContent);
+        }    
+    })
 
 });
 
