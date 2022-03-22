@@ -301,31 +301,64 @@ window.addEventListener('DOMContentLoaded', () => {
         navDots[pos].style.cssText = 'opacity: 1;';
     }
 
-    nextSlide.addEventListener('click', () => {
-        function changePos () {
-            pos !== slides.length - 1 ? pos += 1 : pos = 0;
-        };        
-        changeSlide(changePos)
+    nextSlide.addEventListener('click', () => {     
+        changeSlide(() => pos !== slides.length - 1 ? pos += 1 : pos = 0);
     })
     
-    
-    prevSlide.addEventListener('click', () => {
-        function changePos () {
-            pos !== 0 ? pos -= 1 : pos = slides.length - 1;
-        };        
-        changeSlide(changePos)
+    prevSlide.addEventListener('click', () => {       
+        changeSlide(() => pos !== 0 ? pos -= 1 : pos = slides.length - 1);
     })
 
+    slideNav.addEventListener('click', (e) => {
+        if (e.target.tagName == 'LI') {      
+            changeSlide(() => pos = +e.target.id[5]);
+        }
+    });
 
-    function clickSlideNav(target) {
-        if (target.tagName == 'LI') {
-            function changePos () {
-                pos = +target.id[5];
-            };        
-            changeSlide(changePos)
-        }  
+    // calc
+
+    function changeCalcItem(selector) {
+        const elems = document.querySelectorAll(`${selector} div`);
+        elems.forEach(v => v.addEventListener('click', (e) => {
+            elems.forEach(v => {
+                v.classList.remove('calculating__choose-item_active')});
+            e.target.classList.add('calculating__choose-item_active');
+            calculateKal();
+        }))
+        
     };
-    slideNav.addEventListener('click', (e) => clickSlideNav(e.target));
+
+    function calculateKal() {
+        const data = [],
+        height = parseInt(document.querySelector('#height').value),
+        weight = parseInt(document.querySelector('#weight').value),
+        age = parseInt(document.querySelector('#age').value),
+        answer = document.querySelector('.calculating__result span'),
+        kActiv = {
+            'low': 1.2,
+            'small': 1.375,
+            'medium': 1.55,
+            'high': 1.725
+        };
+        if (height && weight && age) {
+            document.querySelectorAll('.calculating__choose-item_active').forEach(v => {
+                data.push(v.attributes[0].nodeValue)
+            });
+
+            if (data[0] == 'male') {
+                answer.textContent = Math.round(kActiv[data[1]] * (88.36 + 13.4 * weight + 4.8 * height - 5.7 * age));
+            } else {
+                answer.textContent = Math.round(kActiv[data[1]] * (447.6 + 9.2 * weight + 3.1 * height - 4.3 * age))
+            }
+        }
+    }
+
+    calculateKal();
+    changeCalcItem('#gender');
+    changeCalcItem('.calculating__choose_big');
+
+    document.querySelectorAll('.calculating__choose_medium [placeholder]')
+    .forEach(v => v.addEventListener('input', calculateKal));
 
 
 
