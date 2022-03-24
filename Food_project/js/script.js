@@ -323,9 +323,20 @@ window.addEventListener('DOMContentLoaded', () => {
             elems.forEach(v => {
                 v.classList.remove('calculating__choose-item_active')});
             e.target.classList.add('calculating__choose-item_active');
+            localStorage.setItem(selector, e.target.attributes[0].nodeValue);
             calculateKal();
         }))
         
+    };
+
+
+    function checkLocalStorage(selector) {
+        const elems = document.querySelectorAll(`${selector} div`);
+        if (localStorage.getItem(selector)) {
+            elems.forEach(v => {
+                v.classList.remove('calculating__choose-item_active')});
+            document.querySelector('#' + localStorage.getItem(selector)).classList.add('calculating__choose-item_active');
+        }
     };
 
     function calculateKal() {
@@ -340,8 +351,9 @@ window.addEventListener('DOMContentLoaded', () => {
             'medium': 1.55,
             'high': 1.725
         };
+
         if (height && weight && age) {
-            document.querySelectorAll('.calculating__choose-item_active').forEach(v => {
+            document.querySelectorAll('.calculating__choose-item_active').forEach((v, i) => {
                 data.push(v.attributes[0].nodeValue)
             });
 
@@ -353,12 +365,18 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    checkLocalStorage('#gender');
+    checkLocalStorage('.calculating__choose_big');
     calculateKal();
     changeCalcItem('#gender');
     changeCalcItem('.calculating__choose_big');
 
     document.querySelectorAll('.calculating__choose_medium [placeholder]')
-    .forEach(v => v.addEventListener('input', calculateKal));
+    .forEach(v => v.addEventListener('input', () => {
+        if(v.value.match(/\D/g)) v.style.border = '2px solid red';
+        else v.style.border = 'none';
+        calculateKal();
+    }));
 
 
 
